@@ -3,7 +3,14 @@ function Button(props) {
     backgroundColor: props.isHeld ? "#D6DBF5" : "transparent",
   };
   return (
-    <button className="answer-button" style={styles} onClick={props.onClick}>
+    <button
+      className="answer-button"
+      style={styles}
+      onClick={() => {
+        props.changeStyle();
+        props.onClick();
+      }}
+    >
       {props.answer}
     </button>
   );

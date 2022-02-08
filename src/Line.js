@@ -2,12 +2,10 @@ import { nanoid } from "nanoid";
 import { useState, useEffect } from "react";
 import Button from "./Button";
 
-function Line(props) {
-  const buttonArr = [...props.incorrectAnswer, props.correctAnswer].sort(
-    () => Math.random() - 0.5
-  );
-
-  const btn = buttonArr.map((answer) => {
+function Line({ question, answers, handleClick }) {
+  console.log("Child element renders");
+  const [btn, setBtn] = useState([]);
+  const buttons = answers.map((answer) => {
     return {
       answer,
       id: nanoid(),
@@ -15,46 +13,83 @@ function Line(props) {
     };
   });
 
-  const [buttons, setButtons] = useState(btn);
+  useEffect(() => {
+    setBtn(buttons);
+  }, []);
 
-  const answers = buttons.map((btn) => {
+  const answer = btn.map((btn) => {
     return (
       <Button
         key={btn.id}
         answer={btn.answer}
-        onClick={() => holdAnswer(btn.id)}
         isHeld={btn.isHeld}
+        changeStyle={() => holdAnswer(btn.id)}
+        onClick={() => handleClick(btn.answer)}
       />
     );
   });
 
   function holdAnswer(id) {
-    setButtons((oldButtons) =>
-      oldButtons.map((btn) => {
+    setBtn((prevState) =>
+      prevState.map((btn) => {
         return btn.id === id ? { ...btn, isHeld: !btn.isHeld } : btn;
       })
     );
   }
 
-  const [btnHeld, setBtnHeld] = useState([]);
-
-  useEffect(() => {
-    const held = buttons.map((e) => {
-      return e.isHeld ? e : null;
-    });
-    setBtnHeld((prevState) => ({
-      ...prevState,
-      held,
-    }));
-  }, [buttons]);
-
   return (
     <div className="question-line">
-      <h4 className="question-title">{props.question}</h4>
-      {answers}
+      <h4 className="question-title">{question}</h4>
+      {answer}
       <hr className="h-line"></hr>
     </div>
   );
 }
 
 export default Line;
+
+/*
+
+
+NOT USED, JUST FOR REFERENCE
+
+
+*/
+
+// const [buttons, setButtons] = useState([]);
+
+// useEffect(() => {
+//   const buttonArr = [...props.incorrectAnswer, props.correctAnswer].sort(
+//     () => Math.random() - 0.5
+//   );
+
+//   const btn = buttonArr.map((answer) => {
+//     return {
+//       answer,
+//       id: nanoid(),
+//       isHeld: false,
+//     };
+//   });
+
+//   setButtons(btn);
+// }, []);
+
+// const answers = buttons.map((btn) => {
+//   return (
+//     <Button
+//       key={btn.id}
+//       answer={btn.answer}
+//       // getAnswer={() => props.updateHeld(btn.answer)}
+//       changeStyle={() => holdAnswer(btn.id)}
+//       isHeld={btn.isHeld}
+//     />
+//   );
+// });
+
+// function holdAnswer(id) {
+//   setButtons((prevState) =>
+//     prevState.map((btn) => {
+//       return btn.id === id ? { ...btn, isHeld: !btn.isHeld } : btn;
+//     })
+//   );
+// }
