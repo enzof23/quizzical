@@ -1,3 +1,5 @@
+import { memo } from "react";
+
 function Button(props) {
   const styles = {
     backgroundColor: props.isHeld ? "#D6DBF5" : "transparent",

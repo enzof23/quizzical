@@ -8,6 +8,7 @@ function App() {
   const [newGame, setNewGame] = useState(true);
   const [filterAPI, setFilterAPI] = useState([]);
   const [questionAnswers, setQuestionAnswers] = useState([]);
+  const [lines, setLines] = useState([]);
   const [answersSelected, setAnswersSelected] = useState([]);
 
   function getQuestion() {
@@ -32,6 +33,20 @@ function App() {
     getQuestion();
   }, []);
 
+  function createLines() {
+    const displayQuestions = questionAnswers.map((item) => {
+      return (
+        <Line
+          key={nanoid()}
+          question={item.quest}
+          answers={item.answers}
+          handleClick={getClick}
+        />
+      );
+    });
+    setLines(displayQuestions);
+  }
+
   useEffect(() => {
     const item = filterAPI.map((question) => {
       const quest = question.question;
@@ -44,28 +59,17 @@ function App() {
     });
 
     setQuestionAnswers(item);
+    createLines();
   }, [filterAPI]);
-
-  const elements = questionAnswers.map((item) => {
-    return (
-      <Line
-        key={nanoid()}
-        question={item.quest}
-        answers={item.answers}
-        handleClick={getClick}
-      />
-    );
-  });
 
   function startQuiz() {
     setNewGame((prevState) => !prevState);
+    createLines();
   }
 
   function getClick(id) {
     setAnswersSelected(id);
   }
-
-  console.log(answersSelected);
 
   return newGame ? (
     <div className="container">
@@ -73,7 +77,7 @@ function App() {
     </div>
   ) : (
     <div className="container">
-      <div className="question-container">{elements}</div>
+      <div className="question-container">{lines}</div>
     </div>
   );
 }

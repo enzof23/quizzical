@@ -49,11 +49,7 @@ function Line({ question, answers, handleClick }) {
 export default Line;
 
 /*
-
-
 NOT USED, JUST FOR REFERENCE
-
-
 */
 
 // const [buttons, setButtons] = useState([]);
