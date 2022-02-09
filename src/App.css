@@ -70,7 +70,6 @@
 }
 
 .check-answers {
-  margin-top: 1em;
   width: 120px;
   height: 35px;
   background-color: #4d5b9e;
@@ -80,4 +79,15 @@
   border: none;
   border-radius: 10px;
   cursor: pointer;
+}
+
+.answer-container {
+  display: flex;
+  justify-content: center;
+  align-self: center;
+  margin-top: 1em;
+}
+
+.answer-container > p {
+  margin: auto;
 }

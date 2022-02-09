@@ -3,7 +3,6 @@ import { useState, useEffect } from "react";
 import Button from "./Button";
 
 function Line({ question, answers, handleClick }) {
-  console.log("Child element renders");
   const [btn, setBtn] = useState([]);
   const buttons = answers.map((answer) => {
     return {
@@ -32,7 +31,9 @@ function Line({ question, answers, handleClick }) {
   function holdAnswer(id) {
     setBtn((prevState) =>
       prevState.map((btn) => {
-        return btn.id === id ? { ...btn, isHeld: !btn.isHeld } : btn;
+        return btn.id === id
+          ? { ...btn, isHeld: !btn.isHeld }
+          : { ...btn, isHeld: false };
       })
     );
   }

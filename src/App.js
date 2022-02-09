@@ -10,6 +10,19 @@ function App() {
   const [questionAnswers, setQuestionAnswers] = useState([]);
   const [lines, setLines] = useState([]);
   const [answersSelected, setAnswersSelected] = useState([]);
+  const [answerDisplay, setAnswerDisplay] = useState(false);
+  const [textDisplay, setTextDisplay] = useState("text");
+  const [buttonDisplay, setButtonDisplay] = useState(true);
+
+  console.log(
+    filterAPI.map((q) => {
+      return q.correctAnswer;
+    })
+  );
+
+  useEffect(() => {
+    getQuestion();
+  }, []);
 
   function getQuestion() {
     fetch(
@@ -30,24 +43,6 @@ function App() {
   }
 
   useEffect(() => {
-    getQuestion();
-  }, []);
-
-  function createLines() {
-    const displayQuestions = questionAnswers.map((item) => {
-      return (
-        <Line
-          key={nanoid()}
-          question={item.quest}
-          answers={item.answers}
-          handleClick={getClick}
-        />
-      );
-    });
-    setLines(displayQuestions);
-  }
-
-  useEffect(() => {
     const item = filterAPI.map((question) => {
       const quest = question.question;
       const answers = [
@@ -59,7 +54,6 @@ function App() {
     });
 
     setQuestionAnswers(item);
-    createLines();
   }, [filterAPI]);
 
   function startQuiz() {
@@ -67,17 +61,69 @@ function App() {
     createLines();
   }
 
-  function getClick(id) {
-    setAnswersSelected(id);
+  function createLines() {
+    const displayQuestions = questionAnswers.map((item) => {
+      return (
+        <Line
+          key={nanoid()}
+          question={item.quest}
+          answers={item.answers}
+          handleClick={getAnswer}
+        />
+      );
+    });
+    setLines(displayQuestions);
   }
 
-  return newGame ? (
+  function getAnswer(answer) {
+    setAnswersSelected((prevState) => [...prevState, answer]);
+  }
+
+  function checkAnswers() {
+    let count = 0;
+    const correctAnswers = filterAPI.map((q) => {
+      return q.correctAnswer;
+    });
+
+    answersSelected.map((answer) => {
+      for (let i = 0; i < correctAnswers.length; i++) {
+        if (answer === correctAnswers[i]) {
+          count++;
+        }
+      }
+    });
+
+    if (count === 5) {
+      setButtonDisplay((prevState) => !prevState);
+    }
+    setAnswerDisplay((prevState) => !prevState);
+    setTextDisplay(`${count}/5 good answers`);
+  }
+
+  const checkAnswersBtn = (
+    <button className="check-answers" onClick={checkAnswers}>
+      Check Answers
+    </button>
+  );
+  const playAgainBtn = (
+    <button className="check-answers" onClick={checkAnswers}>
+      Play Again
+    </button>
+  );
+
+  return (
     <div className="container">
-      <Start handleClick={startQuiz} />
-    </div>
-  ) : (
-    <div className="container">
-      <div className="question-container">{lines}</div>
+      {newGame ? (
+        <Start handleClick={startQuiz} />
+      ) : (
+        <div className="question-container">
+          {lines}
+          <div className="answer-container">
+            {answerDisplay ? <p>{textDisplay}</p> : ""}
+            {buttonDisplay ? checkAnswersBtn : playAgainBtn}
+          </div>
+        </div>
+      )}
     </div>
   );
 }
