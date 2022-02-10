@@ -111,11 +111,11 @@ function App() {
     // get good answers count to display in message
     let count = 0;
     for (let i = 0; i < correctAnswers.length; i++) {
-      selectedAnswers.forEach((answer) => {
-        if (answer === correctAnswers[i]) {
-          count++;
+      for (let j = 0; j < selectedAnswers.length; j++) {
+        if (selectedAnswers[j] === correctAnswers[i]) {
+          count = count + 1;
         }
-      });
+      }
     }
 
     setDisplayMsg(`You scored ${count}/5 good answers`);
@@ -124,10 +124,10 @@ function App() {
   }
 
   function playAgain() {
-    getQuestion();
     setDisplayMsg("");
     setDisplayAnswer(!displayAnswer);
     setGameEnd(!gameEnd);
+    getQuestion();
   }
 
   const checkAnswerBtn = (
