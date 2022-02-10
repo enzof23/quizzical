@@ -64,6 +64,28 @@
   cursor: pointer;
 }
 
+.held {
+  background-color: #d6dbf5;
+}
+
+.end {
+  color: #293264a8;
+  border: 0.794239px solid #2932646e;
+}
+
+.correct {
+  color: black;
+  font-weight: 500;
+  background-color: #94d7a2;
+  border: none;
+}
+
+.wrong {
+  background-color: #f8bcbc;
+  color: #293264a8;
+  border: none;
+}
+
 .h-line {
   width: 90%;
   border: 0.794239px solid #dbdef0;
@@ -90,4 +112,5 @@
 
 .answer-container > p {
   margin: auto;
+  font-weight: bold;
 }

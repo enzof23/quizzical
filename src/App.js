@@ -1,24 +1,15 @@
 import "./App.css";
 import Start from "./Start";
-import Line from "./Line";
+import Questions from "./Questions";
 import { useState, useEffect } from "react";
-import { nanoid } from "nanoid";
 
 function App() {
+  const [data, setData] = useState([]);
+  const [correctAnswers, setCorrectAnswers] = useState([]);
   const [newGame, setNewGame] = useState(true);
-  const [filterAPI, setFilterAPI] = useState([]);
-  const [questionAnswers, setQuestionAnswers] = useState([]);
-  const [lines, setLines] = useState([]);
-  const [answersSelected, setAnswersSelected] = useState([]);
-  const [answerDisplay, setAnswerDisplay] = useState(false);
-  const [textDisplay, setTextDisplay] = useState("text");
-  const [buttonDisplay, setButtonDisplay] = useState(true);
-
-  console.log(
-    filterAPI.map((q) => {
-      return q.correctAnswer;
-    })
-  );
+  const [displayMsg, setDisplayMsg] = useState("");
+  const [displayAnswer, setDisplayAnswer] = useState(false);
+  const [gameEnd, setGameEnd] = useState(false);
 
   useEffect(() => {
     getQuestion();
@@ -30,12 +21,29 @@ function App() {
     )
       .then((response) => response.json())
       .then((data) =>
-        setFilterAPI(
-          data.results.map((e) => {
+        setData(
+          data.results.map((item, index) => {
+            // get all answers and sort them random
+            const answers = [
+              ...item.incorrect_answers,
+              item.correct_answer,
+            ].sort(() => Math.random() - 0.5);
+
+            // create object for each answer and assign values
+            const createAnswers = answers.map((answer, index) => {
+              return {
+                id: index,
+                answer: answer,
+                isHeld: false,
+              };
+            });
+
+            // create object for each question
             return {
-              question: e.question,
-              correctAnswer: e.correct_answer,
-              incorrectAnswer: e.incorrect_answers,
+              id: index,
+              question: item.question,
+              correctAnswer: item.correct_answer,
+              allAnswers: createAnswers,
             };
           })
         )
@@ -43,84 +51,109 @@ function App() {
   }
 
   useEffect(() => {
-    const item = filterAPI.map((question) => {
-      const quest = question.question;
-      const answers = [
-        ...question.incorrectAnswer,
-        question.correctAnswer,
-      ].sort(() => Math.random() - 0.5);
-
-      return { quest, answers };
-    });
-
-    setQuestionAnswers(item);
-  }, [filterAPI]);
+    setCorrectAnswers(
+      data.map((item) => {
+        return item.correctAnswer;
+      })
+    );
+  }, [data]);
 
   function startQuiz() {
-    setNewGame((prevState) => !prevState);
-    createLines();
+    setNewGame(!newGame);
   }
 
-  function createLines() {
-    const displayQuestions = questionAnswers.map((item) => {
-      return (
-        <Line
-          key={nanoid()}
-          question={item.quest}
-          answers={item.answers}
-          handleClick={getAnswer}
-        />
-      );
+  const elements = data.map((item, index) => {
+    return (
+      <Questions
+        key={item.id}
+        ID={item.id}
+        question={item.question}
+        answers={item.allAnswers}
+        correctAnswer={correctAnswers[index]}
+        gameEnd={gameEnd}
+        holdAnswer={holdAnswer}
+      />
+    );
+  });
+
+  function holdAnswer(questionID, buttonID) {
+    // get the question in data, map over its answers and
+    // update isHeld state to true on the one selected
+    // if isHeld is true on a not selected answer, set it to false (toggle answers)
+    const newAnswers = data[questionID].allAnswers.map((answer) => {
+      return answer.id === buttonID
+        ? { ...answer, isHeld: !answer.isHeld }
+        : answer.isHeld
+        ? { ...answer, isHeld: !answer.isHeld }
+        : answer;
     });
-    setLines(displayQuestions);
+
+    // map over the data and update the question with new answers state
+    const newState = data.map((question) => {
+      return question.id === questionID
+        ? { ...question, allAnswers: newAnswers }
+        : question;
+    });
+    setData(newState);
   }
 
-  function getAnswer(answer) {
-    setAnswersSelected((prevState) => [...prevState, answer]);
-  }
+  function checkAnswer() {
+    // create array with all selected answers (isHeld = true)
+    const selectedAnswers = [];
+    data.map((question) => {
+      return question.allAnswers.forEach((answer) => {
+        if (answer.isHeld) {
+          selectedAnswers.push(answer.answer);
+        }
+      });
+    });
 
-  function checkAnswers() {
+    // get good answers count to display in message
     let count = 0;
-    const correctAnswers = filterAPI.map((q) => {
-      return q.correctAnswer;
-    });
-
-    answersSelected.map((answer) => {
-      for (let i = 0; i < correctAnswers.length; i++) {
+    for (let i = 0; i < correctAnswers.length; i++) {
+      selectedAnswers.forEach((answer) => {
         if (answer === correctAnswers[i]) {
           count++;
         }
-      }
-    });
-
-    if (count === 5) {
-      setButtonDisplay((prevState) => !prevState);
+      });
     }
-    setAnswerDisplay((prevState) => !prevState);
-    setTextDisplay(`${count}/5 good answers`);
+
+    setDisplayMsg(`You scored ${count}/5 good answers`);
+    setDisplayAnswer(!displayAnswer);
+    setGameEnd(!gameEnd);
   }
 
-  const checkAnswersBtn = (
-    <button className="check-answers" onClick={checkAnswers}>
+  function playAgain() {
+    getQuestion();
+    setDisplayMsg("");
+    setDisplayAnswer(!displayAnswer);
+    setGameEnd(!gameEnd);
+  }
+
+  const checkAnswerBtn = (
+    <button className="check-answers" onClick={checkAnswer}>
       Check Answers
     </button>
   );
+
   const playAgainBtn = (
-    <button className="check-answers" onClick={checkAnswers}>
-      Play Again
-    </button>
+    <>
+      <p>{displayMsg}</p>
+      <button className="check-answers" onClick={playAgain}>
+        Play Again
+      </button>
+    </>
   );
 
   return (
     <div className="container">
       {newGame ? (
-        <Start handleClick={startQuiz} />
+        <Start onClick={startQuiz} />
       ) : (
         <div className="question-container">
-          {lines}
+          {elements}
           <div className="answer-container">
-            {answerDisplay ? <p>{textDisplay}</p> : ""}
-            {buttonDisplay ? checkAnswersBtn : playAgainBtn}
+            {!displayAnswer ? checkAnswerBtn : playAgainBtn}
           </div>
         </div>
       )}
@@ -129,78 +162,3 @@ function App() {
 }
 
 export default App;
-
-/*
-
-
-NOT USED, JUST FOR REFERENCE
-
-
-*/
-
-// import "./App.css";
-// import Start from "./Start";
-// import Line from "./Line";
-// import { useEffect, useState } from "react";
-// import { nanoid } from "nanoid";
-
-// function App() {
-//   const [newGame, setNewGame] = useState(true);
-//   const [questions, setQuestions] = useState([]);
-
-//   function getQuestion() {
-//     fetch(
-//       "https://opentdb.com/api.php?amount=5&category=11&difficulty=medium&type=multiple"
-//     )
-//       .then((response) => response.json())
-//       .then((data) =>
-//         setQuestions(
-//           data.results.map((e) => {
-//             return {
-//               question: e.question,
-//               correctAnswer: e.correct_answer,
-//               incorrectAnswer: e.incorrect_answers,
-//             };
-//           })
-//         )
-//       );
-//   }
-
-//   useEffect(() => {
-//     getQuestion();
-//   }, []);
-
-//   const elements = questions.map((q) => {
-//     return (
-//       <Line
-//         key={nanoid()}
-//         question={q.question}
-//         correctAnswer={q.correctAnswer}
-//         incorrectAnswer={q.incorrectAnswer}
-//       />
-//     );
-//   });
-//   const questionsDisplay = (
-//     <div className="question-container">
-//       {elements}
-//       <button className="check-answers" onClick={checkAnswers}>
-//         Check Answers
-//       </button>
-//     </div>
-//   );
-
-//   function startQuiz() {
-//     setNewGame((prevState) => !prevState);
-//   }
-
-//   function checkAnswers() {
-//     console.log("check");
-//   }
-
-//   return (
-//     <div className="container">
-//       {newGame ? <Start handleClick={startQuiz} /> : questionsDisplay}
-//     </div>
-//   );
-// }
-// export default App;
