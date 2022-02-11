@@ -1,4 +1,6 @@
-function Amount({ getAmount }) {
+import { IoIosArrowBack } from "react-icons/io";
+
+function Amount({ getAmount, goBack }) {
   return (
     <>
       <h3 className="category-header">Number of Questions</h3>
@@ -13,6 +15,10 @@ function Amount({ getAmount }) {
           20
         </button>
       </div>
+      <button className="go-back-btn" onClick={goBack}>
+        <IoIosArrowBack />
+        Go Back
+      </button>
     </>
   );
 }

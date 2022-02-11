@@ -1,8 +1,16 @@
-function Start({ onClick }) {
+import { IoIosArrowBack } from "react-icons/io";
+
+function Start({ onClick, goBack }) {
   return (
     <div className="start-page">
       <p>Your quiz is ready, start the game now !</p>
-      <button onClick={onClick}>Start Quiz</button>
+      <button className="start-btn" onClick={onClick}>
+        Start Quiz
+      </button>
+      <button className="go-back-btn center" onClick={goBack}>
+        <IoIosArrowBack />
+        Go Back
+      </button>
     </div>
   );
 }

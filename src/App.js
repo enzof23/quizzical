@@ -5,9 +5,11 @@ import Difficulty from "./Components/Difficulty";
 import Start from "./Components/Start";
 import Questions from "./Components/Questions";
 import { useState, useEffect } from "react";
+import { FiEdit3 } from "react-icons/fi";
 
 function App() {
   const defaultCat = {
+    name: "",
     category: 0,
     amount: 5,
     difficulty: "",
@@ -69,12 +71,11 @@ function App() {
     );
   }, [data]);
 
-  console.log(data);
-
   function getCategory(cat) {
     setCreatGameCat((prevCat) => ({
       ...prevCat,
       category: cat.code,
+      name: cat.category,
     }));
     setGameSetUp(1);
   }
@@ -95,7 +96,9 @@ function App() {
     setGameSetUp(3);
   }
 
-  console.log(createGameCat);
+  function goBack() {
+    setGameSetUp((prevState) => prevState - 1);
+  }
 
   function startQuiz() {
     setNewGame(!newGame);
@@ -114,6 +117,12 @@ function App() {
       />
     );
   });
+
+  function editSettings() {
+    console.log("click");
+    setNewGame(!newGame);
+    setGameSetUp(0);
+  }
 
   function holdAnswer(questionID, buttonID) {
     // get the question in data, map over its answers and
@@ -190,16 +199,35 @@ function App() {
       {gameSetUp === 0 ? (
         <Categories getCategory={getCategory} />
       ) : gameSetUp === 1 ? (
-        <Amount getAmount={getAmount} />
+        <Amount getAmount={getAmount} goBack={goBack} />
       ) : gameSetUp === 2 ? (
-        <Difficulty getDifficulty={getDifficulty} />
+        <Difficulty getDifficulty={getDifficulty} goBack={goBack} />
       ) : (
-        <Start onClick={startQuiz} />
+        <Start onClick={startQuiz} goBack={goBack} />
       )}
     </div>
   ) : (
     <div className="container">
       <div className="question-container">
+        <div className="question-settings">
+          <span>
+            <b>Category:</b> {createGameCat.name}
+          </span>
+          <span>
+            <b>Difficulty: </b>
+            {createGameCat.difficulty === 0
+              ? "Mixed"
+              : createGameCat.difficulty}
+          </span>
+          <span>
+            <b>Questions: </b>
+            {createGameCat.amount}
+          </span>
+          <div className="edit-btn" onClick={editSettings}>
+            <FiEdit3 />
+            Edit
+          </div>
+        </div>
         {elements}
         <div className="answer-container">
           {!displayAnswer ? checkAnswerBtn : playAgainBtn}

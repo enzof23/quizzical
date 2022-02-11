@@ -1,7 +1,9 @@
-function Difficulty({ getDifficulty }) {
+import { IoIosArrowBack } from "react-icons/io";
+
+function Difficulty({ getDifficulty, goBack }) {
   return (
     <>
-      <h3 className="category-header">Number of Questions</h3>
+      <h3 className="category-header">Set Difficulty</h3>
       <div className="difficulty-container">
         <button className="diff-btn" onClick={() => getDifficulty("easy")}>
           Easy
@@ -16,6 +18,10 @@ function Difficulty({ getDifficulty }) {
           Mixed
         </button>
       </div>
+      <button className="go-back-btn" onClick={goBack}>
+        <IoIosArrowBack />
+        Go Back
+      </button>
     </>
   );
 }
