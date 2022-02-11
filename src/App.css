@@ -204,8 +204,12 @@
 }
 
 .answer-button:hover {
-  background-color: rgba(129, 129, 129, 0.089);
+  background-color: #d6dbf5;
   border: 0.794239px solid #4d5b9e70;
+}
+
+.answer-button:active {
+  box-shadow: inset 5px 5px 10px -3px rgba(0, 0, 0, 0.7);
 }
 
 .held {
