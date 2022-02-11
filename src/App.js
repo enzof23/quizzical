@@ -1,11 +1,21 @@
 import "./App.css";
-import Start from "./Start";
-import Questions from "./Questions";
+import Categories from "./Components/Categories";
+import Amount from "./Components/Amount";
+import Difficulty from "./Components/Difficulty";
+import Start from "./Components/Start";
+import Questions from "./Components/Questions";
 import { useState, useEffect } from "react";
 
 function App() {
+  const defaultCat = {
+    category: 0,
+    amount: 5,
+    difficulty: "",
+  };
   const [data, setData] = useState([]);
   const [correctAnswers, setCorrectAnswers] = useState([]);
+  const [gameSetUp, setGameSetUp] = useState(0);
+  const [createGameCat, setCreatGameCat] = useState(defaultCat);
   const [newGame, setNewGame] = useState(true);
   const [displayMsg, setDisplayMsg] = useState("");
   const [displayAnswer, setDisplayAnswer] = useState(false);
@@ -13,11 +23,11 @@ function App() {
 
   useEffect(() => {
     getQuestion();
-  }, []);
+  }, [createGameCat]);
 
   function getQuestion() {
     fetch(
-      "https://opentdb.com/api.php?amount=5&category=11&difficulty=medium&type=multiple"
+      `https://opentdb.com/api.php?amount=${createGameCat.amount}&category=${createGameCat.category}&difficulty=${createGameCat.difficulty}&type=multiple`
     )
       .then((response) => response.json())
       .then((data) =>
@@ -57,6 +67,34 @@ function App() {
       })
     );
   }, [data]);
+
+  console.log(data);
+
+  function getCategory(cat) {
+    setCreatGameCat((prevCat) => ({
+      ...prevCat,
+      category: cat.code,
+    }));
+    setGameSetUp(1);
+  }
+
+  function getAmount(amt) {
+    setCreatGameCat((prevCat) => ({
+      ...prevCat,
+      amount: amt,
+    }));
+    setGameSetUp(2);
+  }
+
+  function getDifficulty(diff) {
+    setCreatGameCat((prevCat) => ({
+      ...prevCat,
+      difficulty: diff,
+    }));
+    setGameSetUp(3);
+  }
+
+  console.log(createGameCat);
 
   function startQuiz() {
     setNewGame(!newGame);
@@ -118,7 +156,7 @@ function App() {
       }
     }
 
-    setDisplayMsg(`You scored ${count}/5 good answers`);
+    setDisplayMsg(`You scored ${count}/${correctAnswers.length} good answers`);
     setDisplayAnswer(!displayAnswer);
     setGameEnd(!gameEnd);
   }
@@ -145,18 +183,27 @@ function App() {
     </>
   );
 
-  return (
+  return newGame ? (
     <div className="container">
-      {newGame ? (
-        <Start onClick={startQuiz} />
+      <h1>Quizical</h1>
+      {gameSetUp === 0 ? (
+        <Categories getCategory={getCategory} />
+      ) : gameSetUp === 1 ? (
+        <Amount getAmount={getAmount} />
+      ) : gameSetUp === 2 ? (
+        <Difficulty getDifficulty={getDifficulty} />
       ) : (
-        <div className="question-container">
-          {elements}
-          <div className="answer-container">
-            {!displayAnswer ? checkAnswerBtn : playAgainBtn}
-          </div>
-        </div>
+        <Start onClick={startQuiz} />
       )}
+    </div>
+  ) : (
+    <div className="container">
+      <div className="question-container">
+        {elements}
+        <div className="answer-container">
+          {!displayAnswer ? checkAnswerBtn : playAgainBtn}
+        </div>
+      </div>
     </div>
   );
 }

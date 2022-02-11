@@ -1,13 +1,102 @@
+.container > h1 {
+  font-size: 42px;
+  line-height: 37px;
+  margin-bottom: 0.5em;
+}
+
+.categories-container {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  width: auto;
+  margin-bottom: 3em;
+  gap: 10px;
+}
+
+.categories-container > button {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  width: 180px;
+  font-family: "Segoe UI";
+  font-size: 18px;
+  font-weight: 500;
+  color: #485492;
+  text-transform: capitalize;
+  text-align: left;
+  padding-left: 0.75em;
+  height: 70px;
+  border-radius: 15px;
+  background-color: transparent;
+  border: 0.794239px solid #4d5b9e3d;
+  margin: 3px auto;
+  cursor: pointer;
+  transition: ease-out 0.2s;
+}
+
+.categories-container > button:hover {
+  padding-right: 0.75em;
+  background-color: #d6dbf5;
+  font-size: 20px;
+  font-weight: 600;
+}
+
+.categories-container > button > svg {
+  height: 1.5em;
+  width: 1.5em;
+}
+
+.category-header {
+  margin-block: 0.75em;
+  font-size: 24px;
+  font-weight: 200;
+  letter-spacing: 0.025em;
+}
+
+.amount-btn {
+  justify-content: center !important;
+  padding: 0 !important;
+  width: 100px !important;
+  height: 100px !important;
+  font-size: 32px !important;
+  font-weight: 400 !important;
+}
+
+.difficulty-container {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  margin-top: 0.5em;
+  gap: 15px;
+}
+
+.difficulty-container > button {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 180px;
+  height: 90px;
+  font-family: "Segoe UI";
+  font-size: 24px;
+  font-weight: 400;
+  color: #485492;
+  text-transform: capitalize;
+  border-radius: 15px;
+  background-color: transparent;
+  border: 0.794239px solid #4d5b9e3d;
+  margin: 3px auto;
+  cursor: pointer;
+  transition: ease-out 0.2s;
+}
+
+.difficulty-container > button:hover {
+  background-color: #d6dbf5;
+  font-size: 26px;
+  font-weight: 500;
+}
+
 .start-page {
-  height: 650px;
   display: flex;
   flex-direction: column;
   justify-content: center;
-}
-
-.start-page > h1 {
-  font-size: 38px;
-  line-height: 37px;
 }
 
 .start-page > p {
@@ -44,7 +133,7 @@
 }
 
 .question-title {
-  font-size: 18px;
+  font-size: 20px;
   color: #293264;
   line-height: 23px;
   margin-bottom: 0.25em;
@@ -52,16 +141,16 @@
 
 .answer-button {
   font-family: "Segoe UI";
-  font-size: 11px;
+  font-size: 14px;
   width: auto;
-  min-width: 70px;
-  height: 25px;
+  min-width: 80px;
+  height: 30px;
   border-radius: 8px;
   background-color: transparent;
   border: 0.794239px solid #4d5b9e;
   margin-block: 5px;
   margin-right: 8px;
-  padding: 0 8px;
+  padding: 0 10px;
   cursor: pointer;
 }
 
@@ -94,11 +183,11 @@
 }
 
 .check-answers {
-  width: 120px;
-  height: 35px;
+  width: 150px;
+  height: 45px;
   background-color: #4d5b9e;
   color: white;
-  font-size: 10px;
+  font-size: 14px;
   font-family: "Segoe UI";
   border: none;
   border-radius: 10px;

@@ -36,6 +36,7 @@ p {
   text-align: center;
   margin: 3em auto;
   height: auto;
+  min-height: 650px;
   width: 700px;
   background-image: url("../public/image/background.png");
   background-size: cover;
