@@ -23,6 +23,7 @@ function App() {
 
   useEffect(() => {
     getQuestion();
+    // eslint-disable-next-line
   }, [createGameCat]);
 
   function getQuestion() {
